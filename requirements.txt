@@ -1,0 +1,8 @@
+jittor
+numpy
+Pillow
+scipy
+tensorboard
+tensorboardx
+tqdm
+trimesh
