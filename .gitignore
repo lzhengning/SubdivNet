@@ -8,6 +8,7 @@ __pycache__
 *.tgz
 *.txt
 *.log
+*.pyc
 data
 build/
 venv/

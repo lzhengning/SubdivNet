@@ -1,6 +1,6 @@
 python3.7 train_seg.py train \
---name HumanSeg \
---dataroot ./data/HumanSeg-NS-256-3 \
+--name HumanBody \
+--dataroot ./data/HumanBody-NS-256-3 \
 --upsample bilinear \
 --batch_size 24 \
 --parts 8 \
