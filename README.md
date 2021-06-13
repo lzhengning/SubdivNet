@@ -74,8 +74,8 @@ sh scripts/<DATASET_NAME>/get_pretrained.sh
 After testing the segmentation network, there will be colored shapes in a `results` directory. Use your favorite 3D viewer to check them.
 
 ## Apply to your own data
-To create your own data with subdivision sequence connectivity, you may use our provided
-tool that implements the MAPS algorithm. You may also refer to [NeuralSubdivision](https://github.com/HTDerekLiu/neuralSubdiv), as they also provide a MATLAB scripts for remeshing.
+To create your own data with subdivision sequence connectivity, you may use the provided
+tool that implements the MAPS algorithm. You may also refer to [NeuralSubdivision](https://github.com/HTDerekLiu/neuralSubdiv), as they provide a MATLAB scripts for remeshing.
 
 To run our implemented MAPS algorithm, first install the following python dependecies,
 
@@ -88,7 +88,7 @@ networkx
 rtree
 ```
 
-Then run `datagen_maps.py` to remesh your meshes.
+Then see `datagen_maps.py` and modify the configurations to remesh your 3D shapes for subdivision connectivity.
 
 ## Cite
 Please cite our paper if you use this code in your own work:
