@@ -359,27 +359,3 @@ class MeshDeepLab(nn.Module):
         x = self.unpool(x, ref_mesh=mesh)
 
         return x.feats
-
-
-
-if __name__ == "__main__":
-    from dataset import SegmentationDataset
-    from utils import to_mesh_tensor
-    from tqdm import tqdm
-    from jittor.optim import SGD
-    jt.flags.use_cuda = True
-
-    net = MeshDeepLab(13, 4)
-
-    dataroot = '/mnt/disk/lzn/SubdivDataset/HumanSeg-256-aug10'
-    train_dataset = SegmentationDataset(dataroot, batch_size=4, 
-        shuffle=True, train=True, num_workers=4, augments=None)
-
-    optim = SGD(net.parameters(), lr=2e-2, momentum=0.9)
-    for meshes, labels, _ in tqdm(train_dataset):
-        mesh_tensor = to_mesh_tensor(meshes)
-        mesh_labels = jt.int32(labels)
-        outputs = net(mesh_tensor)
-        loss = nn.cross_entropy_loss(outputs.unsqueeze(dim=-1), mesh_labels.unsqueeze(dim=-1), ignore_index=-1)
-        optim.step(loss)
-        jt.sync_all(True)

@@ -20,13 +20,6 @@ def to_barycentric(points, triangle):
         raise Exception("Invalid")
 
     eps = 1e-5
-    # if any([a < -eps, b < -eps, c < -eps, a > 1+eps, b > 1+eps, c > 1+eps]):
-    #     breakpoint()
-
-    # if not np.allclose(
-    #     a * triangle[0] + b * triangle[1] + c * triangle[2], points, atol=eps
-    # ):
-    #     breakpoint()
 
     return np.array([a, b, c])
 

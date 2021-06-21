@@ -77,8 +77,6 @@ class MeshConv(nn.Module):
                 ], extras=[mesh_tensor.Fs // 4])
                 mesh_tensor = mesh_tensor.inverse_loop_pool(pooled_feats=y0)
 
-            # jt.abs = lambda x: x
-
             features = []
             features.append(conv_feats.sum(dim=-1))
             features.append(jt.abs(conv_feats[..., [K-1] + list(range(K-1))] - conv_feats).sum(-1))
@@ -127,7 +125,6 @@ class MeshAdaptivePool(nn.Module):
 
     def execute(self, mesh_tensor: MeshTensor):
         jt_op = 'add' if self.op == 'mean' else 'maximum'
-        # return mesh_tensor.feats.max(dim=-1)
 
         y = mesh_tensor.feats.reindex_reduce(
             op=jt_op, 

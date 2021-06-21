@@ -47,7 +47,6 @@ def train(net, optim, train_dataset, writer, epoch):
         if jt.rank == 0:
             writer.add_scalar('loss', loss, global_step=train.step)
 
-
         train.step += 1
 
     jt.sync_all(True)
@@ -90,7 +89,7 @@ def test(net, test_dataset, writer, epoch, args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('mode', choices=['train', 'test'])
-    parser.add_argument('--name', type=str, default='0323-cubes')
+    parser.add_argument('--name', type=str, required=True)
     parser.add_argument('--dataroot', type=str, required=True)
     parser.add_argument('--checkpoint', type=str)
     parser.add_argument('--n_classes', type=int)
