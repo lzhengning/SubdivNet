@@ -7,7 +7,7 @@ from .mesh_ops import MeshAdaptivePool
 from .mesh_ops import MeshBatchNorm
 from .mesh_ops import MeshConv
 from .mesh_ops import MeshDropout
-from .mesh_ops import MeshLinear
+from .mesh_ops import MeshLinearr
 from .mesh_ops import MeshPool
 from .mesh_ops import MeshUnpool
 from .mesh_ops import MeshReLU
@@ -337,7 +337,7 @@ class MeshDeeplabDecoder(nn.Module):
 
 
 class MeshDeepLab(nn.Module):
-    def __init__(self, in_channels, out_channels, backbone='reset18', globalpool='mean'):
+    def __init__(self, in_channels, out_channels, backbone='resnet18', globalpool='mean'):
         super().__init__()
 
         if backbone == 'resnet18':
