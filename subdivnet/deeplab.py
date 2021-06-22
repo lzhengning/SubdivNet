@@ -337,7 +337,7 @@ class MeshDeeplabDecoder(nn.Module):
 
 
 class MeshDeepLab(nn.Module):
-    def __init__(self, in_channels, out_channels, backbone='reset18', globalpool='mean'):
+    def __init__(self, in_channels, out_channels, backbone='resnet18', globalpool='mean'):
         super().__init__()
 
         if backbone == 'resnet18':
