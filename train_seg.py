@@ -5,6 +5,7 @@ import argparse
 import random
 
 import numpy as np
+from tensorboardX import SummaryWriter
 
 import jittor as jt
 import jittor.nn as nn
@@ -12,7 +13,6 @@ from jittor.optim import Adam, SGD
 from jittor.lr_scheduler import MultiStepLR
 jt.flags.use_cuda = 1
 
-from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
 from subdivnet.dataset import SegmentationDataset

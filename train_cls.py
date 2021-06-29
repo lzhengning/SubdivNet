@@ -4,6 +4,7 @@ os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.environ['MKL_NUM_THREADS'] = '1'
 
 import argparse
+from tensorboardX import SummaryWriter
 
 import jittor as jt
 import jittor.nn as nn
@@ -13,7 +14,6 @@ from jittor.lr_scheduler import MultiStepLR
 jt.flags.use_cuda = 1
 
 import numpy as np
-from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
 from subdivnet.dataset import ClassificationDataset
