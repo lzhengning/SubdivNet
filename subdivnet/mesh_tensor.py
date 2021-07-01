@@ -111,7 +111,7 @@ class MeshTensor:
     def FAFP(self) -> jt.Var:
         """ The previous face of current face's adjacent faces """
         if not 'FAFP' in self._cache:
-            self._cache['FAFP'], self._cache['FAFS'] = self.compute_face_adjacency_reordered()
+            self._cache['FAFP'], self._cache['FAFN'] = self.compute_face_adjacency_reordered()
         return self._cache['FAFP']
 
     @property
