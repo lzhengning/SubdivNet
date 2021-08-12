@@ -1,5 +1,5 @@
 import jittor as jt
-
+import numpy as np
 
 class MeshTensor:
     """
@@ -207,8 +207,17 @@ class MeshTensor:
                 self.faces[i, :F, [1,2]],
                 self.faces[i, :F, [2,0]]
             ], dim=0)
-            E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
-            E2F, _ = jt.argsort(E_hash)
+
+            # old, may overflow
+            # E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
+            # E2F, _ = jt.argsort(E_hash)
+
+            # new, using numpy int64
+            E = jt.int64(E).numpy()
+            E_hash = E.min(1) * E.max() + E.max(1)
+            E2F = np.argsort(E_hash)
+            E2F = jt.array64(S)
+
             F2E = jt.zeros_like(E2F)
             F2E[E2F] = jt.index((E.shape[0],), 0) // 2
 
@@ -292,13 +301,17 @@ class MeshTensor:
             ], dim=0)
 
             # TODO: maybe overflow if max_V > 2^15 = 32768
-            E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
-
+            # E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
             # S is index of sorted E_hash.
             # Based on the construction rule of E,
             #   1. S % F is the face id
             #   2. S // F is the order of edge in F
-            S, _ = jt.argsort(E_hash)
+            # S, _ = jt.argsort(E_hash)
+
+            E = jt.int64(E).numpy()
+            E_hash = E.min(1) * E.max() + E.max(1)
+            S = np.argsort(E_hash)
+            S = jt.array64(S)
 
             # S[:, 0] and S[:, 1] are pairs of half-edge
             S = S.reshape(-1, 2)
