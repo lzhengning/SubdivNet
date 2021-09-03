@@ -16,7 +16,7 @@ class MeshTensor:
         ------------
         faces: (N, F, 3) int32
             Array of triangular faces.
-        feats: (N, F, 3) float32
+        feats: (N, C, F) float32
             Array of face features.
         Fs: (N,) int32, optional
             Array of number of faces in each mesh. 
@@ -289,9 +289,8 @@ class MeshTensor:
                 self.faces[i, :F, [1, 2]],
                 self.faces[i, :F, [2, 0]],
                 self.faces[i, :F, [0, 1]],
-            ], dim=0)
+            ], dim=0).astype('int64')
 
-            # TODO: maybe overflow if max_V > 2^15 = 32768
             E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
 
             # S is index of sorted E_hash.
