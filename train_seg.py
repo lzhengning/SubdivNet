@@ -24,9 +24,6 @@ from subdivnet.utils import update_label_accuracy
 from subdivnet.utils import compute_original_accuracy
 from subdivnet.utils import SegmentationMajorityVoting
 
-np.random.seed = 0
-random.seed = 0
-
 
 def train(net, optim, dataset, writer, epoch):
     net.train()
