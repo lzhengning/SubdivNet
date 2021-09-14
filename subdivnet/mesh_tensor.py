@@ -207,7 +207,7 @@ class MeshTensor:
                 self.faces[i, :F, [1,2]],
                 self.faces[i, :F, [2,0]]
             ], dim=0)
-            E_hash = E.min(dim=1) * E.max() + E.max(dim=1)
+            E_hash = E.min(dim=1).astype('int64') * E.max() + E.max(dim=1)
             E2F, _ = jt.argsort(E_hash)
             F2E = jt.zeros_like(E2F)
             F2E[E2F] = jt.index((E.shape[0],), 0) // 2
