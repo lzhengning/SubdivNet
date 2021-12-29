@@ -1,5 +1,5 @@
 # Train
-python3.7 train_cls.py train \
+python3 train_cls.py train \
 --name manifold40 \
 --dataroot ./data/Manifold40-MAPS-96-3/ \
 --optim adam \

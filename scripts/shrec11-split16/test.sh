@@ -1,5 +1,5 @@
 # test shrec11-split16
-python3.7 train_cls.py test \
+python3 train_cls.py test \
 --name shrec11-split16 \
 --dataroot ./data/SHREC11-MAPS-48-4-split16 \
 --batch_size 64 \

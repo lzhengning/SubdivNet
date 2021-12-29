@@ -7,14 +7,14 @@ import jittor.nn as nn
 
 jt.cudnn.set_max_workspace_ratio(0.01)
 
+
 class MeshConv(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, dilation=1, stride=1, bias=True, center_diff=True):
-        '''
-        Parameters:
-        -----------
-            center_diff: bool, optional
-                if True, use the sum of difference to center in convolution.
-                The default is True.
+    def __init__(self, in_channels, out_channels, kernel_size=3, dilation=1, stride=1, bias=True):
+        ''' Now, such convolutions patterns are implemented:
+            * kernel size = 1, stride = [1, 2]
+            * kernel size = 3, dilation = %any%, stride = [1, 2]
+            * kernel size = 5, no dilation, stride = [1, 2]
+            Note that the valid stride is determined by the subdivision connectivity of the input data (see Section 3.3.4). 
         '''
         super().__init__()
         self.in_channels = in_channels
@@ -22,7 +22,6 @@ class MeshConv(nn.Module):
         self.kernel_size = kernel_size
         self.dilation = dilation
         self.stride = stride
-        self.center_diff = center_diff
 
         assert self.kernel_size % 2 == 1
 
@@ -30,7 +29,7 @@ class MeshConv(nn.Module):
             assert dilation == 1
             self.conv1d = nn.Conv1d(in_channels, out_channels, kernel_size=1, bias=bias)
         else:
-            kernel_size = 3 + self.center_diff
+            kernel_size = 4
             self.conv2d = nn.Conv2d(in_channels, out_channels, (1, kernel_size), bias=bias)
 
         assert self.stride in [1, 2]
@@ -40,7 +39,7 @@ class MeshConv(nn.Module):
         if self.in_channels != mesh_tensor.C:
             raise Exception(f'feature dimension is {mesh_tensor.C}, but conv kernel dimension is {self.in_channels}')
 
-        if self.kernel_size == 1:
+        if self.kernel_size == 1:           # Simple Convolution
             feats = mesh_tensor.feats
             if self.stride == 2:
                 N, C, F = mesh_tensor.shape
@@ -49,7 +48,7 @@ class MeshConv(nn.Module):
                 ], extras=[mesh_tensor.Fs // 4])
                 mesh_tensor = mesh_tensor.inverse_loop_pool(pooled_feats=feats)
             y = self.conv1d(feats)
-        else:
+        else:                               # General Convolution
             CKP = mesh_tensor.convolution_kernel_pattern(self.kernel_size, self.dilation)
             K = CKP.shape[2]
 
@@ -78,13 +77,17 @@ class MeshConv(nn.Module):
                 mesh_tensor = mesh_tensor.inverse_loop_pool(pooled_feats=y0)
 
             features = []
-            features.append(conv_feats.sum(dim=-1))
-            features.append(jt.abs(conv_feats[..., [K-1] + list(range(K-1))] - conv_feats).sum(-1))
 
-            if self.center_diff:
-                features.append(jt.abs(y0.unsqueeze(dim=-1) - conv_feats).sum(dim=-1))
-
+            # Convolution: see Equation(2) in the corresponding paper
+            # 1. w_0 * e_i
             features.append(y0)
+            # 2. w_1 * sigma_{e_j}
+            features.append(conv_feats.sum(dim=-1))
+            # 3. w_2 * sigma_{e_j+1 - e_j}
+            features.append(jt.abs(conv_feats[..., [K-1] + list(range(K-1))] - conv_feats).sum(-1))
+            # 4. w_3 * sigma_{e_i - e_j}
+            features.append(jt.abs(y0.unsqueeze(dim=-1) - conv_feats).sum(dim=-1))
+            
             y = jt.stack(features, dim=-1)
             y = self.conv2d(y)[:, :, :, 0]
 

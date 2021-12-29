@@ -1,6 +1,6 @@
 # train cubes
-python3.7 train_cls.py train \
---name Cubes \
+python3 train_cls.py train \
+--name cubes \
 --dataroot ./data/Cubes-MAPS-48-4/ \
 --optim adam \
 --lr 1e-3 \

@@ -1,4 +1,4 @@
-python3.7 train_seg.py test \
+python3 train_seg.py test \
 --name HumanBody \
 --dataroot ./data/HumanBody-NS-256-3 \
 --upsample bilinear \
@@ -6,4 +6,4 @@ python3.7 train_seg.py test \
 --parts 8 \
 --arch deeplab \
 --backbone resnet50 \
---checkpoint ./checkpoints/HumanBody.pkl
+--checkpoint ./checkpoints/humanbody.pkl

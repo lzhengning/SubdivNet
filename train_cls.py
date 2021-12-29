@@ -1,3 +1,9 @@
+# ***************************************************************
+# Author:   Zheng-Ning Liu <lzhengning@gmail.com>
+#
+# The training & test script for mesh classification.
+# ***************************************************************
+
 import os
 
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
@@ -27,6 +33,8 @@ def train(net, optim, train_dataset, writer, epoch):
     n_correct = 0
     n_samples = 0
 
+    jt.sync_all(True)
+
     disable_tqdm = jt.rank != 0
     for meshes, labels, _ in tqdm(train_dataset, desc=f'Train {epoch}', disable=disable_tqdm):
 
@@ -35,9 +43,7 @@ def train(net, optim, train_dataset, writer, epoch):
 
         outputs = net(mesh_tensor)
         loss = nn.cross_entropy_loss(outputs, mesh_labels)
-        jt.sync_all()
         optim.step(loss)
-        jt.sync_all()
 
         preds = np.argmax(outputs.data, axis=1)
         n_correct += np.sum(labels == preds)
@@ -49,12 +55,14 @@ def train(net, optim, train_dataset, writer, epoch):
 
         train.step += 1
 
+    # To avoid jittor handing when training with multiple gpus
     jt.sync_all(True)
 
     if jt.rank == 0:
         acc = n_correct / n_samples
-        print('train acc = ', acc)
+        print('Epoch #{epoch}: train acc = ', acc)
         writer.add_scalar('train-acc', acc, global_step=epoch)
+
 
 @jt.single_process_scope()
 def test(net, test_dataset, writer, epoch, args):
@@ -72,19 +80,25 @@ def test(net, test_dataset, writer, epoch, args):
 
     acc /= test_dataset.total_len
     vacc = voted.compute_accuracy()
-    print('test acc = ', acc)
-    print('test acc [voted] = ', vacc)
+
+    # Update best results
+    if test.best_acc < acc:
+        net.save(os.path.join('checkpoints', name, f'acc-{acc:.4f}.pkl'))
+        if test.best_acc > 0:
+            os.remove(os.path.join('checkpoints', name, f'acc-{test.best_acc:.4f}.pkl'))
+        test.best_acc = acc
+
+    if test.best_vacc < vacc:
+        net.save(os.path.join('checkpoints', name, f'vacc-{vacc:.4f}.pkl'))
+        if test.best_vacc > 0:
+            os.remove(os.path.join('checkpoints', name, f'vacc-{test.best_vacc:.4f}.pkl'))
+        test.best_vacc = vacc
+
+    print(f'Epoch #{epoch}: test acc = {acc}, best = {test.best_acc}')
+    print(f'Epoch #{epoch}: test acc [voted] = {vacc}, best = {test.best_vacc}')
     writer.add_scalar('test-acc', acc, global_step=epoch)
     writer.add_scalar('test-vacc', vacc, global_step=epoch)
 
-    if test.best_acc < acc:
-        test.best_acc = acc
-        net.save(os.path.join('checkpoints', name, f'acc-{acc:.4f}.pkl'))
-
-    if test.best_vacc < vacc:
-        test.best_vacc = vacc
-        net.save(os.path.join('checkpoints', name, f'vacc-{vacc:.4f}.pkl'))
-    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -103,7 +117,6 @@ if __name__ == '__main__':
     parser.add_argument('--channels', type=int, nargs='+', required=True)
     parser.add_argument('--residual', action='store_true')
     parser.add_argument('--blocks', type=int, nargs='+', default=None)
-    parser.add_argument('--no_center_diff', action='store_true')
     parser.add_argument('--n_dropout', type=int, default=1)
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--n_worker', type=int, default=4)
@@ -126,9 +139,9 @@ if __name__ == '__main__':
         augments.append('scale')
     if args.augment_orient:
         augments.append('orient')
-    train_dataset = ClassificationDataset(dataroot, batch_size=args.batch_size, 
+    train_dataset = ClassificationDataset(dataroot, batch_size=args.batch_size,
         shuffle=True, train=True, num_workers=args.n_worker, augment=augments)
-    test_dataset = ClassificationDataset(dataroot, batch_size=args.batch_size, 
+    test_dataset = ClassificationDataset(dataroot, batch_size=args.batch_size,
         shuffle=False, train=False, num_workers=args.n_worker)
 
     input_channels = 7
@@ -142,10 +155,9 @@ if __name__ == '__main__':
         input_channels += 3
 
     # ========== Network ==========
-    net = MeshNet(input_channels, out_channels=args.n_classes, depth=args.depth, 
-        layer_channels=args.channels, residual=args.residual, 
-        blocks=args.blocks, n_dropout=args.n_dropout, 
-        center_diff=not args.no_center_diff)
+    net = MeshNet(input_channels, out_channels=args.n_classes, depth=args.depth,
+        layer_channels=args.channels, residual=args.residual,
+        blocks=args.blocks, n_dropout=args.n_dropout)
 
     # ========== Optimizer ==========
     if args.optim == 'adam':
@@ -163,12 +175,13 @@ if __name__ == '__main__':
         writer = SummaryWriter("logs/" + name)
     else:
         writer = None
-    
+
     checkpoint_path = os.path.join('checkpoints', name)
     checkpoint_name = os.path.join(checkpoint_path, name + '-latest.pkl')
     os.makedirs(checkpoint_path, exist_ok=True)
 
     if args.checkpoint is not None:
+        print('parameters: loaded from ', args.checkpoint)
         net.load(args.checkpoint)
 
     train.step = 0

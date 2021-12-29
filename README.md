@@ -1,18 +1,27 @@
 # Subdivision-based Mesh Convolutional Networks
 
-The official implementation of `SubdivNet` in our paper,
+The implementation of `SubdivNet` in our paper,
 
 [Subdivion-based Mesh Convolutional Networks](https://arxiv.org/abs/2106.02285)
 
 ![teaser](teaser.jpg)
 
-## Requirements
 
+## News
+* This paper was accepted by ACM Transactions on Graphics. 
+* Improvided implementation and more documentation.
+
+## Features
+* Provides implementations of mesh classification and segmentation on various datasets.
+* Provides ready-to-use datasets, pretrained models, training and evaluation scripts.
+* Supports a batch of meshes with different number of faces.
+
+## Requirements
 * python3.7+
 * CUDA 10.1+
 * [Jittor](https://github.com/Jittor/jittor)
 
-To install python requirements:
+To install other python requirements:
 
 ```setup
 pip install -r requirements.txt
@@ -35,7 +44,7 @@ To download the preprocessed data, run
 sh scripts/<DATASET_NAME>/get_data.sh
 ```
 
-`Manfold40` (before remeshed) can be downloaded via [this link](https://cloud.tsinghua.edu.cn/f/2a292c598af94265a0b8/?dl=1).
+> The `Manfold40` dataset (before remeshed, without subdivision connectivity) can be downloaded via [this link](https://cloud.tsinghua.edu.cn/f/2a292c598af94265a0b8/?dl=1). This version cannot be used as inputs of SubdivNet. To train SubdivNet, run scripts/manifold40/get_data.sh
 
 ## Training
 To train the model(s) in the paper, run this command:
@@ -73,7 +82,8 @@ sh scripts/<DATASET_NAME>/get_pretrained.sh
 ## Visualize
 After testing the segmentation network, there will be colored shapes in a `results` directory. Use your favorite 3D viewer to check them.
 
-## Apply to your own data
+## How to apply SubdivNet to your own data
+SubdivNet cannot be directly applied to any meshes, because 
 To create your own data with subdivision sequence connectivity, you may use the provided
 tool that implements the MAPS algorithm. You may also refer to [NeuralSubdivision](https://github.com/HTDerekLiu/neuralSubdiv), as they provide a MATLAB scripts for remeshing.
 

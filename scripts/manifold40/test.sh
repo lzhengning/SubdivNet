@@ -1,6 +1,6 @@
-python3.7 train_cls.py test \
+python3 train_cls.py test \
 --name Manifold40 \
---dataroot ./data/Manifold40-MAPS-96-3-0412/ \
+--dataroot ./data/Manifold40-MAPS-96-3/ \
 --batch_size 12 \
 --n_classes 40 \
 --depth 3 \
@@ -8,4 +8,4 @@ python3.7 train_cls.py test \
 --n_dropout 2 \
 --use_xyz \
 --use_normal \
---checkpoint ./checkpoints/Manifold40.pkl
+--checkpoint ./checkpoints/manifold40.pkl

@@ -95,7 +95,7 @@ def load_segment(path):
 
 class ClassificationDataset(Dataset):
     def __init__(self, dataroot, batch_size, train=True, shuffle=False, num_workers=0, augment=False, in_memory=False):
-        super().__init__(batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, keep_numpy_array=True, buffer_size=134217728)
+        super().__init__(batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, keep_numpy_array=True, buffer_size=134217728*2)
 
         self.batch_size = batch_size
         self.augment = augment
@@ -113,7 +113,8 @@ class ClassificationDataset(Dataset):
 
 
     def browse_dataroot(self):
-        self.shape_classes = [x.name for x in self.dataroot.iterdir() if x.is_dir()]
+        # self.shape_classes = [x.name for x in self.dataroot.iterdir() if x.is_dir()]
+        self.shape_classes = sorted([x.name for x in self.dataroot.iterdir() if x.is_dir()])
 
         for obj_class in self.dataroot.iterdir():
             if obj_class.is_dir():
@@ -180,17 +181,18 @@ class SegmentationDataset(Dataset):
 
     def browse_dataroot(self):
         for dataset in (Path(self.dataroot) / self.mode).iterdir():
-            if dataset.is_dir():
-                for obj_path in dataset.iterdir():
-                    if obj_path.suffix == '.obj':
-                        obj_name = obj_path.stem
-                        seg_path = obj_path.parent / (obj_name + '.json')
+            if not dataset.is_dir():
+                continue
+            for obj_path in dataset.iterdir():
+                if obj_path.suffix == '.obj':
+                    obj_name = obj_path.stem
+                    seg_path = obj_path.parent / (obj_name + '.json')
 
-                        raw_name = obj_name.rsplit('-', 1)[0]
-                        raw_path = list(Path(self.dataroot).glob(f'raw/{raw_name}.*'))[0]
-                        self.mesh_paths.append(str(obj_path))
-                        self.raw_paths.append(str(raw_path))
-                        self.seg_paths.append(str(seg_path))
+                    raw_name = obj_name.rsplit('-', 1)[0]
+                    raw_path = list(Path(self.dataroot).glob(f'raw/{raw_name}.*'))[0]
+                    self.mesh_paths.append(str(obj_path))
+                    self.raw_paths.append(str(raw_path))
+                    self.seg_paths.append(str(seg_path))
         self.mesh_paths = np.array(self.mesh_paths)
         self.raw_paths = np.array(self.raw_paths)
         self.seg_paths = np.array(self.seg_paths)

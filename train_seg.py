@@ -40,7 +40,8 @@ def train(net, optim, dataset, writer, epoch):
         writer.add_scalar('loss', loss.data[0], global_step=train.step)
         train.step += 1
     acc /= dataset.total_len
-    print('train acc = ', acc)
+
+    print('Epoch #{epoch}: train acc = ', acc)
     writer.add_scalar('train-acc', acc, global_step=epoch)
 
 
@@ -70,21 +71,27 @@ def test(net, dataset, writer, epoch, args):
     acc /= dataset.total_len
     oacc /= dataset.total_len
     voacc = voted.compute_accuracy(save_results=True)
-    print('test acc = ', acc)
-    print('test acc [original] = ', oacc)
-    print('test acc [original] [voted] = ', voacc)
-    print('test acc per label = ', label_acc / dataset.total_len)
     writer.add_scalar('test-acc', acc, global_step=epoch)
     writer.add_scalar('test-oacc', oacc, global_step=epoch)
     writer.add_scalar('test-voacc', voacc, global_step=epoch)
 
+    # Update best results
     if test.best_oacc < oacc:
-        test.best_oacc = oacc
         net.save(os.path.join('checkpoints', name, f'oacc-{oacc:.4f}.pkl'))
+        if test.best_oacc > 0:
+            os.remove(os.path.join('checkpoints', name, f'oacc-{test.best_oacc:.4f}.pkl'))
+        test.best_oacc = oacc
 
     if test.best_voacc < voacc:
-        test.best_voacc = voacc
         net.save(os.path.join('checkpoints', name, f'voacc-{voacc:.4f}.pkl'))
+        if test.best_voacc > 0:
+            os.remove(os.path.join('checkpoints', name, f'voacc-{test.best_voacc:.4f}.pkl'))
+        test.best_voacc = voacc
+
+    print('test acc = ', acc)
+    print('test acc [original] =', oacc, ', best =', test.best_oacc)
+    print('test acc [original] [voted] =', voacc, ', best =', test.best_voacc)
+    print('test acc per label =', label_acc / dataset.total_len)
 
 
 if __name__ == '__main__':
@@ -143,6 +150,7 @@ if __name__ == '__main__':
     os.makedirs(checkpoint_path, exist_ok=True)
 
     if args.checkpoint is not None:
+        print('parameters: loaded from ', args.checkpoint)
         net.load(args.checkpoint)
 
     train.step = 0

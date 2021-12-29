@@ -15,11 +15,11 @@ from .mesh_ops import mesh_add
 
 
 class MeshConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, dilation=1, center_diff=True):
+    def __init__(self, in_channels, out_channels, dilation=1):
         super().__init__()
 
-        self.mconv1 = MeshConv(in_channels, out_channels, dilation=dilation, bias=False, center_diff=center_diff)
-        self.mconv2 = MeshConv(out_channels, out_channels, dilation=dilation, bias=False, center_diff=center_diff)
+        self.mconv1 = MeshConv(in_channels, out_channels, dilation=dilation, bias=False)
+        self.mconv2 = MeshConv(out_channels, out_channels, dilation=dilation, bias=False)
         self.bn1 = MeshBatchNorm(out_channels)
         self.bn2 = MeshBatchNorm(out_channels)
         self.relu1 = MeshReLU()
@@ -136,8 +136,7 @@ class MeshBottleneck(nn.Module):
 
 class MeshNet(nn.Module):
     def __init__(self, in_channels: int, out_channels: int, depth: int, 
-        layer_channels: List[int], residual=False, blocks=None, n_dropout=1,
-        center_diff=True):
+        layer_channels: List[int], residual=False, blocks=None, n_dropout=1):
         super(MeshNet, self).__init__()
         self.fc = MeshLinear(in_channels, layer_channels[0])
         self.relu = MeshReLU()
@@ -150,13 +149,11 @@ class MeshNet(nn.Module):
                     self.convs.append(MeshResConvBlock(layer_channels[i + 1], layer_channels[i + 1]))
             else:
                 self.convs.append(MeshConvBlock(layer_channels[i], 
-                                                layer_channels[i + 1],
-                                                center_diff=center_diff))
+                                                layer_channels[i + 1]))
             self.convs.append(MeshPool('max'))
         self.convs.append(MeshConv(layer_channels[-1], 
                                    layer_channels[-1], 
-                                   bias=False, 
-                                   center_diff=center_diff))
+                                   bias=False))
         self.global_pool = MeshAdaptivePool('max')
 
         if n_dropout >= 2:
