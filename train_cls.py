@@ -83,15 +83,15 @@ def test(net, test_dataset, writer, epoch, args):
 
     # Update best results
     if test.best_acc < acc:
-        net.save(os.path.join('checkpoints', name, f'acc-{acc:.4f}.pkl'))
         if test.best_acc > 0:
             os.remove(os.path.join('checkpoints', name, f'acc-{test.best_acc:.4f}.pkl'))
+        net.save(os.path.join('checkpoints', name, f'acc-{acc:.4f}.pkl'))
         test.best_acc = acc
 
     if test.best_vacc < vacc:
-        net.save(os.path.join('checkpoints', name, f'vacc-{vacc:.4f}.pkl'))
         if test.best_vacc > 0:
             os.remove(os.path.join('checkpoints', name, f'vacc-{test.best_vacc:.4f}.pkl'))
+        net.save(os.path.join('checkpoints', name, f'vacc-{vacc:.4f}.pkl'))
         test.best_vacc = vacc
 
     print(f'Epoch #{epoch}: test acc = {acc}, best = {test.best_acc}')

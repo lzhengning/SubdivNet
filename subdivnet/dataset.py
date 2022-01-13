@@ -31,7 +31,7 @@ def randomize_mesh_orientation(mesh: trimesh.Trimesh):
 def random_scale(mesh: trimesh.Trimesh):
     mesh.vertices = mesh.vertices * np.random.normal(1, 0.1, size=(1, 3))
     return mesh
-    
+
 
 def mesh_normalize(mesh: trimesh.Trimesh):
     vertices = mesh.vertices - mesh.vertices.min(axis=0)

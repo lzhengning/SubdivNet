@@ -1,15 +1,8 @@
 # Subdivision-based Mesh Convolutional Networks
 
-The implementation of `SubdivNet` in our paper,
-
-[Subdivion-based Mesh Convolutional Networks](https://arxiv.org/abs/2106.02285)
+The implementation of `SubdivNet` in our paper, [Subdivion-based Mesh Convolutional Networks](https://arxiv.org/abs/2106.02285)
 
 ![teaser](teaser.jpg)
-
-
-## News
-* This paper was accepted by ACM Transactions on Graphics. 
-* Improvided implementation and more documentation.
 
 ## Features
 * Provides implementations of mesh classification and segmentation on various datasets.
@@ -23,7 +16,7 @@ The implementation of `SubdivNet` in our paper,
 
 To install other python requirements:
 
-```setup
+```
 pip install -r requirements.txt
 ```
 
@@ -37,6 +30,7 @@ on the following datasets,
 - manifold40 (based on ModelNet40)
 - humanbody
 - coseg-aliens
+- coseg-vases
 
 To download the preprocessed data, run
 

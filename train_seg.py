@@ -77,15 +77,15 @@ def test(net, dataset, writer, epoch, args):
 
     # Update best results
     if test.best_oacc < oacc:
-        net.save(os.path.join('checkpoints', name, f'oacc-{oacc:.4f}.pkl'))
         if test.best_oacc > 0:
             os.remove(os.path.join('checkpoints', name, f'oacc-{test.best_oacc:.4f}.pkl'))
+        net.save(os.path.join('checkpoints', name, f'oacc-{oacc:.4f}.pkl'))
         test.best_oacc = oacc
 
     if test.best_voacc < voacc:
-        net.save(os.path.join('checkpoints', name, f'voacc-{voacc:.4f}.pkl'))
         if test.best_voacc > 0:
             os.remove(os.path.join('checkpoints', name, f'voacc-{test.best_voacc:.4f}.pkl'))
+        net.save(os.path.join('checkpoints', name, f'voacc-{voacc:.4f}.pkl'))
         test.best_voacc = voacc
 
     print('test acc = ', acc)
@@ -102,6 +102,8 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--optim', choices=['adam', 'sgd'], default='adam')
     parser.add_argument('--lr', type=float, default=2e-2)
+    parser.add_argument('--lr_milestones', type=int, nargs='+', default=[50, 100, 150])
+    parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--weight_decay', type=float, default=0)
     parser.add_argument('--checkpoint', type=str)
     parser.add_argument('--upsample', choices=['nearest', 'bilinear'], default='bilinear')
@@ -128,7 +130,8 @@ if __name__ == '__main__':
         optim = Adam(net.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     else:
         optim = SGD(net.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    scheduler = MultiStepLR(optim, milestones=[50, 100, 150], gamma=0.1)
+
+    scheduler = MultiStepLR(optim, milestones=args.lr_milestones, gamma=args.lr_gamma)
  
     writer = SummaryWriter("logs/" + name)
     print('name:', name)

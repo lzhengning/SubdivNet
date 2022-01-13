@@ -39,23 +39,27 @@ class MeshVanillaUnet(nn.Module):
     def __init__(self, in_channels, out_channels, upsample='nearest') -> None:
         super().__init__()
 
-        self.fc1 = MeshLinear(in_channels, 64)
+        self.fc1 = MeshLinear(in_channels, 32)
         self.relu = MeshReLU()
         self.pool = MeshPool('max')
         self.unpool = MeshUnpool(upsample)
 
-        self.enc1 = MeshConvBlock(64, 128)
-        self.enc2 = MeshConvBlock(128, 256)
-        self.enc3 = MeshConvBlock(256, 512)
+        self.enc1 = MeshConvBlock(32, 64)
+        self.enc2 = MeshConvBlock(64, 128)
+        self.enc3 = MeshConvBlock(128, 128)
 
-        self.mid_conv = MeshConvBlock(512, 512)
+        self.mid_conv = MeshConvBlock(128, 128)
 
-        self.dec3 = MeshConvBlock(1024, 256)
-        self.dec2 = MeshConvBlock(512, 128)
-        self.dec1 = MeshConvBlock(256, 64)
+        self.dec3 = MeshConvBlock(256, 128)
+        self.dec2 = MeshConvBlock(256, 64)
+        self.dec1 = MeshConvBlock(128, 64)
 
-        self.dp = MeshDropout()
-        self.fc2 = MeshLinear(64, out_channels)
+        self.fc2 = nn.Sequential(
+            MeshDropout(0.5),
+            MeshLinear(64, 64),
+            MeshDropout(0.1),
+            MeshLinear(64, out_channels)
+        )
 
     def execute(self, mesh):
         mesh = self.fc1(mesh)
@@ -75,7 +79,7 @@ class MeshVanillaUnet(nn.Module):
         dec_mesh1 = self.unpool(dec_mesh2, ref_mesh=enc_mesh1)
         dec_mesh1 = self.dec1(mesh_concat([dec_mesh1, enc_mesh1]))
 
-        out_mesh = self.fc2(self.dp(dec_mesh1))
+        out_mesh = self.fc2(dec_mesh1)
 
         return out_mesh.feats
 
