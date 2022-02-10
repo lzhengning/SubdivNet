@@ -111,7 +111,7 @@ class MeshBottleneck(nn.Module):
         self.stride = stride
         self.dilation = dilation
 
-    def forward(self, x):
+    def execute(self, x):
         residual = x
 
         out = self.conv1(x)
