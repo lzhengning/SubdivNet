@@ -351,7 +351,7 @@ class MeshTensor:
                         for (int k = 0; k < out_shape2; ++k) {
                             int a = f;
                             int b = @FAF(bs, f, k);
-                            for (int d = 1; d < 0; ++d) {
+                            for (int d = 1; d < dilation; ++d) {
                                 int i = @FAF(bs, b, 0) == a ? 0 : (@FAF(bs, b, 1) == a ? 1 : 2);
                                 a = b;
                                 if ((d & 1) == 0) {       // go to next
