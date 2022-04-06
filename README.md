@@ -1,8 +1,11 @@
 # Subdivision-based Mesh Convolutional Networks
 
-The implementation of `SubdivNet` in our paper, [Subdivion-based Mesh Convolutional Networks](https://arxiv.org/abs/2106.02285)
+The implementation of `SubdivNet` in our paper, [Subdivion-based Mesh Convolutional Networks](https://cg.cs.tsinghua.edu.cn/papers/TOG-2022-SubdivNet.pdf)
 
 ![teaser](teaser.jpg)
+
+## News
+* 🔥This paper was accepted by [ACM TOG](https://dl.acm.org/doi/10.1145/3506694). 
 
 ## Features
 * Provides implementations of mesh classification and segmentation on various datasets.
@@ -38,7 +41,8 @@ To download the preprocessed data, run
 sh scripts/<DATASET_NAME>/get_data.sh
 ```
 
-> The `Manfold40` dataset (before remeshed, without subdivision connectivity) can be downloaded via [this link](https://cloud.tsinghua.edu.cn/f/2a292c598af94265a0b8/?dl=1). This version cannot be used as inputs of SubdivNet. To train SubdivNet, run scripts/manifold40/get_data.sh
+> The `Manfold40` dataset (before remeshed, without subdivision connectivity) can be downloaded via [this link](https://cloud.tsinghua.edu.cn/f/2a292c598af94265a0b8/?dl=1). 
+> Note that this version cannot be used as inputs of SubdivNet. To train SubdivNet, run scripts/manifold40/get_data.sh.
 
 ## Training
 To train the model(s) in the paper, run this command:
@@ -74,12 +78,13 @@ sh scripts/<DATASET_NAME>/get_pretrained.sh
 ```
 
 ## Visualize
-After testing the segmentation network, there will be colored shapes in a `results` directory. Use your favorite 3D viewer to check them.
+After testing the segmentation network, there will be colored shapes in a `results` directory.
 
 ## How to apply SubdivNet to your own data
-SubdivNet cannot be directly applied to any meshes, because 
-To create your own data with subdivision sequence connectivity, you may use the provided
-tool that implements the MAPS algorithm. You may also refer to [NeuralSubdivision](https://github.com/HTDerekLiu/neuralSubdiv), as they provide a MATLAB scripts for remeshing.
+SubdivNet cannot be directly applied to any common meshes, because it requires the input to hold the subdivision connectivity.
+
+To create your own data with subdivision connectivity, you may use the provided
+tool that implements the MAPS algorithm. You may also refer to [NeuralSubdivision](https://github.com/HTDerekLiu/neuralSubdiv), as they provide a MATLAB script for remeshing.
 
 To run our implemented MAPS algorithm, first install the following python dependecies,
 
@@ -98,12 +103,17 @@ Then see `datagen_maps.py` and modify the configurations to remesh your 3D shape
 Please cite our paper if you use this code in your own work:
 
 ```
-@misc{hu2021subdivisionbased,
-      title={Subdivision-Based Mesh Convolution Networks}, 
-      author={Shi-Min Hu and Zheng-Ning Liu and Meng-Hao Guo and Jun-Xiong Cai and Jiahui Huang and Tai-Jiang Mu and Ralph R. Martin},
-      year={2021},
-      eprint={2106.02285},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{DBLP:journals/corr/abs-2106-02285,
+  author    = {Shi{-}Min Hu and
+               Zheng{-}Ning Liu and
+               Meng{-}Hao Guo and
+               Junxiong Cai and
+               Jiahui Huang and
+               Tai{-}Jiang Mu and
+               Ralph R. Martin},
+  title     = {Subdivision-Based Mesh Convolution Networks},
+  journal   = {CoRR},
+  volume    = {abs/2106.02285},
+  year      = {2021}
 }
 ```
