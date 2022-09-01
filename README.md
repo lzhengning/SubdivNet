@@ -103,7 +103,7 @@ Then see `datagen_maps.py` and modify the configurations to remesh your 3D shape
 Please cite our paper if you use this code in your own work:
 
 ```
-@article{DBLP:journals/corr/abs-2106-02285,
+@article{DBLP:journals/tog/HuLGCHMM22,
   author    = {Shi{-}Min Hu and
                Zheng{-}Ning Liu and
                Meng{-}Hao Guo and
@@ -111,9 +111,13 @@ Please cite our paper if you use this code in your own work:
                Jiahui Huang and
                Tai{-}Jiang Mu and
                Ralph R. Martin},
-  title     = {Subdivision-Based Mesh Convolution Networks},
-  journal   = {CoRR},
-  volume    = {abs/2106.02285},
-  year      = {2021}
+  title     = {Subdivision-based Mesh Convolution Networks},
+  journal   = {{ACM} Trans. Graph.},
+  volume    = {41},
+  number    = {3},
+  pages     = {25:1--25:16},
+  year      = {2022},
+  url       = {https://doi.org/10.1145/3506694},
+  doi       = {10.1145/3506694}
 }
 ```
