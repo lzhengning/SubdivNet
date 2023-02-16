@@ -41,7 +41,7 @@ To download the preprocessed data, run
 sh scripts/<DATASET_NAME>/get_data.sh
 ```
 
-> The `Manfold40` dataset (before remeshed, without subdivision connectivity) can be downloaded via [this link](https://cloud.tsinghua.edu.cn/f/2a292c598af94265a0b8/?dl=1). 
+> The `Manfold40` dataset (before remeshed, without subdivision connectivity) can be downloaded via [this link](https://cg.cs.tsinghua.edu.cn/dataset/subdivnet/datasets/Manifold40.zip). 
 > Note that this version cannot be used as inputs of SubdivNet. To train SubdivNet, run scripts/manifold40/get_data.sh.
 
 ## Training

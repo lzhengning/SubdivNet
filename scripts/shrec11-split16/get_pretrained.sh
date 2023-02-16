@@ -3,5 +3,5 @@
 CHECKPOINT_DIR=$(dirname $0)/'../../checkpoints'
 
 mkdir -p $CHECKPOINT_DIR && cd $CHECKPOINT_DIR
-wget --content-disposition https://cloud.tsinghua.edu.cn/f/83eb6ba94b07475e922e/?dl=1
+wget --content-disposition https://cg.cs.tsinghua.edu.cn/dataset/subdivnet/checkpoints/shrec11-split16/shrec11-split16.pkl
 echo "downloaded the checkpoint and putting it in: " $CHECKPOINT_DIR
