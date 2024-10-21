@@ -103,7 +103,7 @@ Then see `datagen_maps.py` and modify the configurations to remesh your 3D shape
 Please cite our paper if you use this code in your own work:
 
 ```
-@article{DBLP:journals/tog/HuLGCHMM22,
+@article{subdivnet-tog-2022,
   author    = {Shi{-}Min Hu and
                Zheng{-}Ning Liu and
                Meng{-}Hao Guo and
@@ -117,7 +117,6 @@ Please cite our paper if you use this code in your own work:
   number    = {3},
   pages     = {25:1--25:16},
   year      = {2022},
-  url       = {https://doi.org/10.1145/3506694},
-  doi       = {10.1145/3506694}
+  url       = {https://doi.org/10.1145/3506694}
 }
 ```
